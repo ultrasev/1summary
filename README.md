@@ -11,9 +11,8 @@ OneSummary 是一个简洁的浏览器扩展，可以快速生成网页内容的
 - 便捷的摘要复制功能
 
 ## 安装说明
-
-1. 下载本扩展的源代码
-2. 打开 Chrome 浏览器，进入扩展管理页面（chrome://extensions/）
+1. 从 [GitHub Releases](https://github.com/ultrasev/1summary/releases) 下载最新版本的扩展包
+2. 解压后打开 Chrome 浏览器，进入扩展管理页面（chrome://extensions/）
 3. 启用"开发者模式"
 4. 点击"加载已解压的扩展程序"，选择包含扩展文件的文件夹
 
@@ -31,11 +30,16 @@ OneSummary 是一个简洁的浏览器扩展，可以快速生成网页内容的
 5. 使用 "Regenerate" 按钮可以重新生成摘要
 6. 使用 "Copy" 按钮可以复制生成的摘要
 
-## 文件结构
+注：以上配置信息保存到浏览器本地，不会上传到任何服务器，参考 [popup.js](./onesummary/popup.js) 文件中 `StorageManager` 类的实现。
 
-- `popup.js`: 处理弹出窗口的逻辑和用户交互
-- `popup.html`: 定义弹出窗口的HTML结构
-- `manifest.json`: 扩展的配置文件，定义权限和资源
+### demo
+
+<table>
+  <tr>
+    <td><img src="public/demo1.png" alt="演示图片1" width="100%"></td>
+    <td><img src="public/demo2.png" alt="演示图片2" width="100%"></td>
+  </tr>
+</table>
 
 ## 注意事项
 
@@ -44,12 +48,13 @@ OneSummary 是一个简洁的浏览器扩展，可以快速生成网页内容的
 - 某些网站可能会限制内容提取，可能会影响摘要生成
 
 ## 贡献
-
-欢迎提交问题报告和改进建议。如果您想为项目做出贡献，请提 PR。
+目前结合 Groq、Sambanova 的免费 Llama 3.1 405B 模型，基本上可以满足日常需求。后面如果有必要、有时间会继续完善，同时也欢迎感兴趣的朋友提交 PR，有问题和改进建议请提 issue。
 
 ### TODO
 
+
 - [ ] 侧边栏展示
+- [ ] 支持其他 API（视情况而定）
 
 ## 许可证
 
