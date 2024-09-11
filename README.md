@@ -34,10 +34,12 @@ OneSummary 是一个简洁的浏览器扩展，可以快速生成网页内容的
 
 ### demo
 
-<div style="display: flex; justify-content: space-between;">
-  <img src="public/demo1.png" alt="演示图片1" style="width: 48%; border-radius: 10px;">
-  <img src="public/demo2.png" alt="演示图片2" style="width: 48%; border-radius: 10px;">
-</div>
+<table>
+  <tr>
+    <td><img src="public/demo1.png" alt="演示图片1" width="100%"></td>
+    <td><img src="public/demo2.png" alt="演示图片2" width="100%"></td>
+  </tr>
+</table>
 
 ## 注意事项
 
