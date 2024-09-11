@@ -1,4 +1,5 @@
 import { llm, testLLMConnection } from './models.js';
+import { PROMPT } from './config.js';
 
 class StorageManager {
   loadSettings() {
@@ -36,14 +37,23 @@ class UIManager {
     this.settingsDiv.style.display = 'none';
     this.copyButton = document.getElementById('copyButton');
     this.buttonContainer = document.querySelector('.button-container');
+    this.setupApiCandidates();
   }
 
   populateSettingsForm(settings) {
     document.getElementById('appKey').value = settings.appKey || '';
     document.getElementById('apiUrl').value = settings.apiUrl || '';
     document.getElementById('model').value = settings.model || 'deepseek-chat';
-    document.getElementById('prompt').value = settings.prompt || '';
+    document.getElementById('prompt').value = settings.prompt || PROMPT;
     document.getElementById('temperature').value = settings.temperature || '0.7';
+
+    const apiCandidates = document.getElementById('apiCandidates');
+    const matchingOption = Array.from(apiCandidates.options).find(option => option.value === settings.apiUrl);
+    if (matchingOption) {
+      apiCandidates.value = settings.apiUrl;
+    } else {
+      apiCandidates.value = "";
+    }
   }
 
   getSettingsFromForm() {
@@ -122,7 +132,7 @@ class UIManager {
 
     if (result.success) {
       connectionStatus.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="#4CAF50" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>';
-      connectionStatusText.innerHTML = '<p>Connection successful, response: </p>';
+      connectionStatusText.innerHTML = '<p>Connection successful and configuration saved! Test response: </p>';
     } else {
       connectionStatus.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="#F44336" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>';
       connectionStatusText.innerHTML = `<p>Connection failed: ${result.error}</p>`;
@@ -132,6 +142,27 @@ class UIManager {
     if (result.details) {
       connectionStatusText.innerHTML += '<div class="details-container"><pre class="details-content">' + JSON.stringify(result.details, null, 2) + '</pre></div>';
     }
+  }
+
+  setupApiCandidates() {
+    const apiCandidates = document.getElementById('apiCandidates');
+    const apiUrlInput = document.getElementById('apiUrl');
+
+    apiCandidates.addEventListener('change', (event) => {
+      if (event.target.value) {
+        apiUrlInput.value = event.target.value;
+      }
+    });
+
+    apiUrlInput.addEventListener('input', () => {
+      const currentUrl = apiUrlInput.value;
+      const matchingOption = Array.from(apiCandidates.options).find(option => option.value === currentUrl);
+      if (matchingOption) {
+        apiCandidates.value = currentUrl;
+      } else {
+        apiCandidates.value = "";
+      }
+    });
   }
 }
 

@@ -370,15 +370,28 @@
       </div>
 
       <div class="input-group">
-        <label for="apiUrl"
-          >API URL: e.g., https://api.openai.com/v1/chat/completions</label
-        >
+        <label for="apiUrl">API URL:</label>
         <input
           type="text"
           id="apiUrl"
           placeholder="Enter API URL"
           title="Enter the API URL (e.g., https://api.openai.com/v1/chat/completions)"
         />
+        <select id="apiCandidates" style="margin-top: 10px">
+          <option value="https://api.openai.com/v1/chat/completions">
+            OpenAI API
+          </option>
+          <option value="https://api.deepseek.com/v1/chat/completions">
+            DeepSeek API
+          </option>
+          <option value="https://api.groq.com/openai/v1/chat/completions">
+            Groq API
+          </option>
+          <option value="https://api.sambanova.ai/v1/chat/completions">
+            Sambanova API
+          </option>
+          <option value="">Other API</option>
+        </select>
       </div>
       <div class="input-group">
         <label for="model">Model:</label>
