@@ -73,7 +73,6 @@ export function llm(content, onChunk) {
                 }
                 resolve();
             } catch (error) {
-                console.error('Error in llm calling:', error);
                 reject(error);
             }
         });

@@ -164,7 +164,6 @@ class SummaryManager {
       this.enableRegenerateButton();
       document.getElementById('copyButton').style.display = 'block';
     } catch (error) {
-      console.error('Error:', error);
       this.handleError(error);
     } finally {
       this.enableRegenerateButton();
@@ -294,7 +293,7 @@ class PopupManager {
       return;
     }
     await this.summaryManager.generateSummary(forceRegenerate);
-    this.copyButton.style.display = 'block';
+    this.uiManager.copyButton.style.display = 'block';
   }
 
   regenerateSummary() {
@@ -328,7 +327,7 @@ class PopupManager {
         copyButton.textContent = 'Copy';
       }, 2000);
     } catch (err) {
-      console.error('Failed to copy text: ', err);
+      this.uiManager.showMessage('复制失败，请手动复制。');
     }
   }
 }
