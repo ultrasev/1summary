@@ -1,7 +1,9 @@
 # OneSummary 浏览器扩展
+
 <figure style="text-align: center">
-    <img src="raw.png" width=64pt>
+    <img src="public/raw.png" width=64pt>
 </figure>
+
 <div align="center">
 
 <a href='https://follow-your-click.github.io/'><img src='https://img.shields.io/badge/Project-Page-Green'></a> ![visitors](https://visitor-badge.laobi.icu/badge?page_id=ultrasev.1summary&left_color=green&right_color=red)[![GitHub](https://img.shields.io/github/stars/ultrasev/1summary?style=social)](https://github.com/ultrasev/1summary)
@@ -18,6 +20,7 @@ OneSummary 是一个简洁的浏览器扩展，可以快速生成网页内容的
 - 一键复制摘要内容
 
 # 安装说明
+
 1. 从 [GitHub Releases](https://github.com/ultrasev/1summary/releases) 下载最新版本的扩展包
 2. 解压后打开 Chrome 浏览器，进入扩展管理页面（chrome://extensions/）
 3. 启用"开发者模式"
@@ -60,9 +63,11 @@ OneSummary 是一个简洁的浏览器扩展，可以快速生成网页内容的
 - 某些网站可能会限制内容提取，可能会影响摘要生成
 
 # 贡献
+
 目前结合 Groq、Sambanova 的免费 Llama 3.1 405B 模型，基本上可以满足日常需求。后面如果有必要、有时间会继续完善，同时也欢迎感兴趣的朋友提交 PR，有问题和改进建议请提 issue。
 
 ## TODO
+
 - [ ] 侧边栏展示
 - [ ] 局部摘要
 
