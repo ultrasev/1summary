@@ -1,13 +1,13 @@
 # OneSummary 浏览器扩展
+
 <div align="center">
 <figure style="text-align: center">
     <img src="public/raw.png" width=64pt>
 </figure>
+OneSummary
 
-<a href='https://follow-your-click.github.io/'><img src='https://img.shields.io/badge/Project-Page-Green'></a> ![visitors](https://visitor-badge.laobi.icu/badge?page_id=ultrasev.1summary&left_color=green&right_color=red)[![GitHub](https://img.shields.io/github/stars/ultrasev/1summary?style=social)](https://github.com/ultrasev/1summary)
+一个简洁的浏览器扩展，快速生成网页摘要
 </div>
-
-OneSummary 是一个简洁的浏览器扩展，可以快速生成网页内容的摘要。
 
 # 功能特点
 
