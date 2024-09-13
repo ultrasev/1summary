@@ -1,10 +1,8 @@
 # OneSummary 浏览器扩展
-
+<div align="center">
 <figure style="text-align: center">
     <img src="public/raw.png" width=64pt>
 </figure>
-
-<div align="center">
 
 <a href='https://follow-your-click.github.io/'><img src='https://img.shields.io/badge/Project-Page-Green'></a> ![visitors](https://visitor-badge.laobi.icu/badge?page_id=ultrasev.1summary&left_color=green&right_color=red)[![GitHub](https://img.shields.io/github/stars/ultrasev/1summary?style=social)](https://github.com/ultrasev/1summary)
 </div>
