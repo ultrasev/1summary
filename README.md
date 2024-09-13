@@ -1,8 +1,15 @@
 # OneSummary 浏览器扩展
+<figure style="text-align: center">
+    <img src="raw.png" width=64pt>
+</figure>
+<div align="center">
+
+<a href='https://follow-your-click.github.io/'><img src='https://img.shields.io/badge/Project-Page-Green'></a> ![visitors](https://visitor-badge.laobi.icu/badge?page_id=ultrasev.1summary&left_color=green&right_color=red)[![GitHub](https://img.shields.io/github/stars/ultrasev/1summary?style=social)](https://github.com/ultrasev/1summary)
+</div>
 
 OneSummary 是一个简洁的浏览器扩展，可以快速生成网页内容的摘要。
 
-## 功能特点
+# 功能特点
 
 - 一键生成网页摘要
 - 支持自定义 API 设置（API 密钥、URL、模型等）
@@ -10,13 +17,13 @@ OneSummary 是一个简洁的浏览器扩展，可以快速生成网页内容的
 - 支持重新生成摘要
 - 便捷的摘要复制功能
 
-## 安装说明
+# 安装说明
 1. 从 [GitHub Releases](https://github.com/ultrasev/1summary/releases) 下载最新版本的扩展包
 2. 解压后打开 Chrome 浏览器，进入扩展管理页面（chrome://extensions/）
 3. 启用"开发者模式"
 4. 点击"加载已解压的扩展程序"，选择包含扩展文件的文件夹
 
-## 使用方法
+# 使用方法
 
 1. 点击浏览器工具栏中的扩展图标打开弹出窗口
 2. 首次使用时，点击设置图标进行必要的配置：
@@ -32,7 +39,12 @@ OneSummary 是一个简洁的浏览器扩展，可以快速生成网页内容的
 
 注：以上配置信息保存到浏览器本地，不会上传到任何服务器，参考 [popup.js](./onesummary/popup.js) 文件中 `StorageManager` 类的实现。
 
-### demo
+## 关于 API endpoints
+
+目前主要支持兼容 OpenAI 规范的 API，比如：`groq`、`deepseek`，有其他需求可以使用第三方工具（比如 [pro-api](https://github.com/duolabmeng6/pro-api)）进行转换，github 上有很多这样现成的库。
+如果不想使用第三方工具，也可以参考 [models.js](./onesummary/models.js) 文件的实现方式，添加新的 API 实现。
+
+## demo
 
 <table>
   <tr>
@@ -41,21 +53,19 @@ OneSummary 是一个简洁的浏览器扩展，可以快速生成网页内容的
   </tr>
 </table>
 
-## 注意事项
+# 注意事项
 
 - 请妥善保管您的 API 密钥，不要与他人分享
 - 本扩展需要访问当前标签页的内容权限才能正常工作
 - 某些网站可能会限制内容提取，可能会影响摘要生成
 
-## 贡献
+# 贡献
 目前结合 Groq、Sambanova 的免费 Llama 3.1 405B 模型，基本上可以满足日常需求。后面如果有必要、有时间会继续完善，同时也欢迎感兴趣的朋友提交 PR，有问题和改进建议请提 issue。
 
-### TODO
-
-
+## TODO
 - [ ] 侧边栏展示
-- [ ] 支持其他 API（视情况而定）
+- [ ] 局部摘要
 
-## 许可证
+# 许可证
 
 MIT
