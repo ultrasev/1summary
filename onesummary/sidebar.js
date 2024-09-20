@@ -218,27 +218,40 @@ class SummaryManager {
     if (!chrome.scripting) {
       throw new Error('chrome.scripting is not available');
     }
-    const results = await chrome.scripting.executeScript({
-      target: { tabId: tabId },
-      function: () => {
-        // Create a clone of the body to avoid modifying the original page
-        const clone = document.body.cloneNode(true);
+    try {
+      const results = await chrome.scripting.executeScript({
+        target: { tabId: tabId },
+        func: () => {
+          console.log('Content script is running');
 
-        // Remove scripts and styles from the clone
-        const elementsToRemove = clone.querySelectorAll('script, style');
-        elementsToRemove.forEach(el => el.remove());
+          const clone = document.cloneNode(true);
+          const cloneBody = clone.body;
 
-        const mainContent = clone.querySelector('main') || clone.getElementById('content') || clone;
+          const elementsToRemove = cloneBody.querySelectorAll('script, style, nav, footer, .js-consent-banner');
+          elementsToRemove.forEach(el => el.remove());
 
-        let text = mainContent.innerText;
-        text = text.replace(/\s+/g, ' ').trim();
-        return text.slice(0, 4096);
-      },
-    });
-    if (results && results[0] && results[0].result) {
-      return results[0].result;
+          const textNodes = [];
+          const walk = document.createTreeWalker(cloneBody, NodeFilter.SHOW_TEXT, null, false);
+          let node;
+          while (node = walk.nextNode()) {
+            const computedStyle = window.getComputedStyle(node.parentElement);
+            if (computedStyle.display !== 'none' && computedStyle.visibility !== 'hidden') {
+              textNodes.push(node.textContent.trim());
+            }
+          }
+
+          let text = textNodes.join(' ');
+          text = text.replace(/\s+/g, ' ').trim();
+          return text.slice(0, 8192); // keep the text length within 8192 characters
+        },
+      });
+      if (results && results[0] && results[0].result) {
+        return results[0].result;
+      }
+      throw new Error('Failed to get page content: No result returned');
+    } catch (error) {
+      throw new Error(`Failed to get page content: ${error.message}`);
     }
-    throw new Error('Failed to get page content');
   }
 
   async getSummary(content) {
