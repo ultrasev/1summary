@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>One-Click Summarizer</title>
+    <title>One-Click Summarizer Sidebar</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
       rel="stylesheet"
@@ -14,25 +14,17 @@
         --secondary-color: #2ecc71;
         --background-color: #f5f5f5;
         --text-color: #333;
-        --card-background: #ffffff;
-      }
-
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
       }
 
       body {
         font-family: serif, "Roboto", sans-serif;
         background-color: var(--background-color);
         color: var(--text-color);
-        width: 600px;
-        height: 480px;
         display: flex;
         flex-direction: column;
-        overflow: hidden; /* Prevent body scrolling */
         font-size: 14px;
+        margin: 0;
+        padding: 10px;
       }
 
       header {
@@ -88,25 +80,6 @@
 
       input[type="range"] {
         width: 100%;
-      }
-
-      #summary {
-        border-radius: 8px;
-        padding: 15px;
-        margin-top: 15px;
-        max-height: 400px;
-        overflow-y: auto;
-        margin-bottom: 30px;
-      }
-
-      .button-container {
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        margin-top: 0px;
-        background-color: var(
-          --background-color
-        ); /* Match the background color */
       }
 
       #summary {
@@ -182,6 +155,9 @@
         font-weight: bold;
       }
       .input-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
         position: relative;
         width: 80%;
       }
@@ -196,14 +172,16 @@
       .input-group input[type="password"] {
         padding-right: 35px;
       }
+
       #togglePassword {
         position: absolute;
-        right: 5px;
+        right: 3px;
         top: 50%;
         transform: translateY(-50%);
         background: none;
         border: none;
         cursor: pointer;
+        padding: 5px;
       }
 
       .button-container {
@@ -222,7 +200,7 @@
 
       .button-title {
         margin-bottom: 5px;
-        font-size: 12px;
+        font-size: 16px;
         color: var(--text-color);
       }
 
@@ -267,7 +245,6 @@
       textarea#prompt {
         overflow-y: auto;
         min-height: 60px;
-        max-height: 300px;
         transition: height 0.2s ease;
       }
       #testConnection {
@@ -319,7 +296,6 @@
       }
 
       .details-container {
-        max-height: 200px;
         overflow-y: auto;
         border: 1px solid #ccc;
         padding: 10px;
@@ -335,9 +311,10 @@
       }
 
       .contact-info {
-        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         padding: 10px;
-        background-color: #f0f0f0;
         border-radius: 5px;
         font-size: 12px;
       }
@@ -382,7 +359,7 @@
             placeholder="Enter API Key"
             title="Enter your API key here"
           />
-          <button id="togglePassword" type="button">
+          <button id="togglePassword" type="button" style="margin-left: 5px">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -496,7 +473,6 @@
                 d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"
               ></path>
             </svg>
-            1summary
           </a>
         </p>
       </div>
@@ -506,7 +482,6 @@
 
     <div class="button-container">
       <div class="button-wrapper">
-        <span class="button-title">Regenerate</span>
         <button id="regenerateButton" class="action-button" title="Regenerate">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -526,10 +501,10 @@
             ></path>
           </svg>
         </button>
+        <span class="button-title">Regenerate</span>
       </div>
 
       <div class="button-wrapper">
-        <span class="button-title" id="copyButtonTitle">Copy</span>
         <button id="copyButton" class="action-button" title="Copy">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -548,10 +523,11 @@
             ></path>
           </svg>
         </button>
+        <span class="button-title" id="copyButtonTitle">Copy</span>
       </div>
     </div>
 
     <script src="marked.min.js"></script>
-    <script type="module" src="popup.js"></script>
+    <script type="module" src="sidebar.js"></script>
   </body>
 </html>
