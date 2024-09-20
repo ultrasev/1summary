@@ -21,7 +21,7 @@ OneSummary
 # 安装说明
 
 1. 从 [GitHub Releases](https://github.com/ultrasev/1summary/releases) 下载最新版本的扩展包
-2. 解压后打开 Chrome 浏览器，进入扩展管理页面（chrome://extensions/）
+2. 解压后打开 Chrome 浏览器，进入扩展管理页面（[chrome://extensions/](chrome://extensions/)）
 3. 启用"开发者模式"
 4. 点击"加载已解压的扩展程序"，选择包含扩展文件的文件夹
 
