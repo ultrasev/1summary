@@ -4,13 +4,33 @@ import { PROMPT } from './config.js';
 class StorageManager {
   loadSettings() {
     return new Promise((resolve) => {
-      chrome.storage.sync.get(['appKey', 'apiUrl', 'model', 'prompt', 'temperature'], resolve);
+      chrome.storage.sync.get(['provider', 'providers'], (result) => {
+        const provider = result.provider || 'default';
+        const providers = result.providers || {};
+        const settings = providers[provider] || {};
+        resolve({
+          provider: provider,
+          appKey: settings.appKey || '',
+          apiUrl: settings.apiUrl || '',
+          model: settings.model || '',
+          prompt: settings.prompt || '',
+          temperature: settings.temperature || ''
+        });
+      });
     });
   }
 
   saveSettings(settings) {
     return new Promise((resolve) => {
-      chrome.storage.sync.set(settings, resolve);
+      const { provider, ...providerSettings } = settings;
+      chrome.storage.sync.get(['providers'], (result) => {
+        const providers = result.providers || {};
+        providers[provider] = providerSettings;
+        console.log('setting providers', providers);
+        chrome.storage.sync.set({
+          providers: providers
+        }, resolve);
+      });
     });
   }
 
@@ -43,7 +63,7 @@ class UIManager {
   populateSettingsForm(settings) {
     document.getElementById('appKey').value = settings.appKey || '';
     document.getElementById('apiUrl').value = settings.apiUrl || '';
-    document.getElementById('model').value = settings.model || 'deepseek-chat';
+    document.getElementById('model').value = settings.model || '';
     document.getElementById('prompt').value = settings.prompt || PROMPT;
     document.getElementById('temperature').value = settings.temperature || '0.7';
 
@@ -62,7 +82,8 @@ class UIManager {
       apiUrl: document.getElementById('apiUrl').value,
       model: document.getElementById('model').value,
       prompt: document.getElementById('prompt').value,
-      temperature: document.getElementById('temperature').value
+      temperature: document.getElementById('temperature').value,
+      provider: document.getElementById('apiUrl').value.split('/')[2]
     };
   }
 
@@ -83,7 +104,6 @@ class UIManager {
   showMessage(message) {
     this.summaryElement.textContent = message;
     this.buttonContainer.style.display = 'none';
-
   }
 
   displaySummary(summary) {
@@ -151,6 +171,19 @@ class UIManager {
     apiCandidates.addEventListener('change', (event) => {
       if (event.target.value) {
         apiUrlInput.value = event.target.value;
+        const provider = event.target.value.split('/')[2];
+        console.log(provider);
+        chrome.storage.sync.get(['providers'], function (result) {
+          console.log(result);
+          const providers = result.providers || {};
+          const providerSettings = providers[provider] || {};
+          console.log(providerSettings);
+
+          document.getElementById('appKey').value = providerSettings.appKey || '';
+          document.getElementById('model').value = providerSettings.model || '';
+          document.getElementById('prompt').value = providerSettings.prompt || PROMPT;
+          document.getElementById('temperature').value = providerSettings.temperature || '0.7';
+        });
       }
     });
 
@@ -347,6 +380,7 @@ class PopupManager {
 
   async testConnection() {
     const settings = this.uiManager.getSettingsFromForm();
+    console.log(settings);
     await this.storageManager.saveSettings(settings);
     try {
       const result = await testLLMConnection();
