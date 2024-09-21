@@ -2,7 +2,7 @@ import { PROMPT as DEFAULT_PROMPT } from './config.js';
 
 export function llm(content, onChunk) {
     return new Promise((resolve, reject) => {
-        chrome.storage.sync.get(['provider', 'providers'], function (result) {
+        chrome.storage.local.get(['provider', 'providers'], function (result) {
             const provider = result.provider || 'default';
             const providers = result.providers || {};
             const settings = providers[provider] || {};
@@ -35,58 +35,58 @@ export function llm(content, onChunk) {
                     stream: true
                 })
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.body.getReader();
-            })
-            .then(reader => {
-                const decoder = new TextDecoder("utf-8");
-                function readChunk() {
-                    return reader.read().then(({ done, value }) => {
-                        if (done) {
-                            resolve();
-                            return;
-                        }
-                        const chunk = decoder.decode(value);
-                        const lines = chunk.split("\n");
-                        const parsedLines = lines
-                            .map(line => line.replace(/^data: /, "").trim())
-                            .filter(line => line !== "" && line !== "[DONE]")
-                            .map(line => {
-                                try {
-                                    return JSON.parse(line);
-                                } catch (error) {
-                                    return {
-                                        choices: [
-                                            {
-                                                delta: {
-                                                    content: line
-                                                }
-                                            }
-                                        ]
-                                    };
-                                }
-                            })
-                            .filter(line => line !== null);
-
-                        for (const parsedLine of parsedLines) {
-                            const { choices } = parsedLine;
-                            const { delta } = choices[0];
-                            const { content } = delta;
-                            if (content) {
-                                onChunk(content);
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.body.getReader();
+                })
+                .then(reader => {
+                    const decoder = new TextDecoder("utf-8");
+                    function readChunk() {
+                        return reader.read().then(({ done, value }) => {
+                            if (done) {
+                                resolve();
+                                return;
                             }
-                        }
-                        return readChunk();
-                    });
-                }
-                return readChunk();
-            })
-            .catch(error => {
-                reject(error);
-            });
+                            const chunk = decoder.decode(value);
+                            const lines = chunk.split("\n");
+                            const parsedLines = lines
+                                .map(line => line.replace(/^data: /, "").trim())
+                                .filter(line => line !== "" && line !== "[DONE]")
+                                .map(line => {
+                                    try {
+                                        return JSON.parse(line);
+                                    } catch (error) {
+                                        return {
+                                            choices: [
+                                                {
+                                                    delta: {
+                                                        content: line
+                                                    }
+                                                }
+                                            ]
+                                        };
+                                    }
+                                })
+                                .filter(line => line !== null);
+
+                            for (const parsedLine of parsedLines) {
+                                const { choices } = parsedLine;
+                                const { delta } = choices[0];
+                                const { content } = delta;
+                                if (content) {
+                                    onChunk(content);
+                                }
+                            }
+                            return readChunk();
+                        });
+                    }
+                    return readChunk();
+                })
+                .catch(error => {
+                    reject(error);
+                });
         });
     });
 }
@@ -95,7 +95,7 @@ export function llm(content, onChunk) {
 export async function testLLMConnection() {
     try {
         const { provider, providers } = await new Promise((resolve) => {
-            chrome.storage.sync.get(['provider', 'providers'], resolve);
+            chrome.storage.local.get(['provider', 'providers'], resolve);
         });
 
         if (!provider || !providers || !providers[provider]) {

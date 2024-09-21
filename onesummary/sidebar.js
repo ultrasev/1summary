@@ -4,7 +4,7 @@ import { PROMPT } from './config.js';
 class StorageManager {
   loadSettings() {
     return new Promise((resolve) => {
-      chrome.storage.sync.get(['provider', 'providers'], (result) => {
+      chrome.storage.local.get(['provider', 'providers'], (result) => {
         const provider = result.provider || 'default';
         const providers = result.providers || {};
         const settings = providers[provider] || {};
@@ -20,17 +20,15 @@ class StorageManager {
     });
   }
 
-  saveSettings(settings) {
-    return new Promise((resolve) => {
-      const { provider, ...providerSettings } = settings;
-      chrome.storage.sync.get(['providers'], (result) => {
-        const providers = result.providers || {};
-        providers[provider] = providerSettings;
-        console.log('setting providers', providers);
-        chrome.storage.sync.set({
-          providers: providers
-        }, resolve);
-      });
+  async saveSettings(settings) {
+    const { provider, ...providerSettings } = settings;
+    const result = await new Promise((resolve) => {
+      chrome.storage.local.get('providers', resolve);
+    });
+    const providers = result.providers || {};
+    providers[provider] = providerSettings;
+    await new Promise((resolve) => {
+      chrome.storage.local.set({ providers, provider }, resolve);
     });
   }
 
@@ -168,22 +166,24 @@ class UIManager {
     const apiCandidates = document.getElementById('apiCandidates');
     const apiUrlInput = document.getElementById('apiUrl');
 
-    apiCandidates.addEventListener('change', (event) => {
+    apiCandidates.addEventListener('change', async (event) => {
       if (event.target.value) {
         apiUrlInput.value = event.target.value;
         const provider = event.target.value.split('/')[2];
-        console.log(provider);
-        chrome.storage.sync.get(['providers'], function (result) {
-          console.log(result);
-          const providers = result.providers || {};
-          const providerSettings = providers[provider] || {};
-          console.log(providerSettings);
 
-          document.getElementById('appKey').value = providerSettings.appKey || '';
-          document.getElementById('model').value = providerSettings.model || '';
-          document.getElementById('prompt').value = providerSettings.prompt || PROMPT;
-          document.getElementById('temperature').value = providerSettings.temperature || '0.7';
+        // 使用 Promise 包装 chrome.storage.local.get
+        const result = await new Promise(resolve => {
+          chrome.storage.local.get(['providers'], resolve);
         });
+
+
+        const providers = result.providers || {};
+        const providerSettings = providers[provider] || {};
+
+        document.getElementById('appKey').value = providerSettings.appKey || '';
+        document.getElementById('model').value = providerSettings.model || '';
+        document.getElementById('prompt').value = providerSettings.prompt || PROMPT;
+        document.getElementById('temperature').value = providerSettings.temperature || '0.7';
       }
     });
 
@@ -255,7 +255,6 @@ class SummaryManager {
       const results = await chrome.scripting.executeScript({
         target: { tabId: tabId },
         func: () => {
-          console.log('Content script is running');
 
           const clone = document.cloneNode(true);
           const cloneBody = clone.body;
@@ -360,7 +359,9 @@ class PopupManager {
   async saveSettings() {
     const settings = this.uiManager.getSettingsFromForm();
     await this.storageManager.saveSettings(settings);
-    // Remove the call to checkSettingsAndGenerateSummary here
+
+    // 重新加载设置以确保更新
+    await this.loadSettings();
   }
 
   async checkSettingsAndGenerateSummary(forceRegenerate = false) {
@@ -380,7 +381,6 @@ class PopupManager {
 
   async testConnection() {
     const settings = this.uiManager.getSettingsFromForm();
-    console.log(settings);
     await this.storageManager.saveSettings(settings);
     try {
       const result = await testLLMConnection();
