@@ -2,79 +2,91 @@ import { PROMPT as DEFAULT_PROMPT } from './config.js';
 
 export function llm(content, onChunk) {
     return new Promise((resolve, reject) => {
-        chrome.storage.sync.get(['appKey', 'apiUrl', 'model', 'prompt', 'temperature'], async function (result) {
-            const appKey = result.appKey;
-            const apiUrl = result.apiUrl;
-            const model = result.model;
-            const prompt = result.prompt || DEFAULT_PROMPT;
-            const temperature = parseFloat(result.temperature) || 0.7;
+        chrome.storage.local.get(['provider', 'providers'], function (result) {
+            const provider = result.provider || 'default';
+            const providers = result.providers || {};
+            const settings = providers[provider] || {};
 
-            try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'Authorization': `Bearer ${appKey}`
-                    },
-                    body: JSON.stringify({
-                        model: model,
-                        messages: [
-                            { role: "system", content: prompt },
-                            { role: "user", content: content }
-                        ],
-                        temperature: temperature,
-                        stream: true
-                    })
-                });
+            const appKey = settings.appKey || '';
+            const apiUrl = settings.apiUrl || '';
+            const model = settings.model || '';
+            const prompt = settings.prompt || DEFAULT_PROMPT;
+            const temperature = parseFloat(settings.temperature) || 0.7;
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder("utf-8");
-
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) {
-                        break;
-                    }
-                    const chunk = decoder.decode(value);
-                    const lines = chunk.split("\n");
-                    const parsedLines = lines
-                        .map(line => line.replace(/^data: /, "").trim())
-                        .filter(line => line !== "" && line !== "[DONE]")
-                        .map(line => {
-                            try {
-                                return JSON.parse(line);
-                            } catch (error) {
-                                return {
-                                    choices: [
-                                        {
-                                            delta: {
-                                                content: line
-                                            }
-                                        }
-                                    ]
-                                };
-                            }
-                        })
-                        .filter(line => line !== null);
-
-                    for (const parsedLine of parsedLines) {
-                        const { choices } = parsedLine;
-                        const { delta } = choices[0];
-                        const { content } = delta;
-                        if (content) {
-                            onChunk(content);
-                        }
-                    }
-                }
-                resolve();
-            } catch (error) {
-                reject(error);
+            if (!appKey || !apiUrl || !model) {
+                reject(new Error('Missing required settings: API Key, API URL, or Model'));
+                return;
             }
+
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${appKey}`
+                },
+                body: JSON.stringify({
+                    model: model,
+                    messages: [
+                        { role: "system", content: prompt },
+                        { role: "user", content: content }
+                    ],
+                    temperature: temperature,
+                    stream: true
+                })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.body.getReader();
+                })
+                .then(reader => {
+                    const decoder = new TextDecoder("utf-8");
+                    function readChunk() {
+                        return reader.read().then(({ done, value }) => {
+                            if (done) {
+                                resolve();
+                                return;
+                            }
+                            const chunk = decoder.decode(value);
+                            const lines = chunk.split("\n");
+                            const parsedLines = lines
+                                .map(line => line.replace(/^data: /, "").trim())
+                                .filter(line => line !== "" && line !== "[DONE]")
+                                .map(line => {
+                                    try {
+                                        return JSON.parse(line);
+                                    } catch (error) {
+                                        return {
+                                            choices: [
+                                                {
+                                                    delta: {
+                                                        content: line
+                                                    }
+                                                }
+                                            ]
+                                        };
+                                    }
+                                })
+                                .filter(line => line !== null);
+
+                            for (const parsedLine of parsedLines) {
+                                const { choices } = parsedLine;
+                                const { delta } = choices[0];
+                                const { content } = delta;
+                                if (content) {
+                                    onChunk(content);
+                                }
+                            }
+                            return readChunk();
+                        });
+                    }
+                    return readChunk();
+                })
+                .catch(error => {
+                    reject(error);
+                });
         });
     });
 }
@@ -82,10 +94,15 @@ export function llm(content, onChunk) {
 
 export async function testLLMConnection() {
     try {
-        const settings = await new Promise((resolve) => {
-            chrome.storage.sync.get(['appKey', 'apiUrl', 'model'], resolve);
+        const { provider, providers } = await new Promise((resolve) => {
+            chrome.storage.local.get(['provider', 'providers'], resolve);
         });
 
+        if (!provider || !providers || !providers[provider]) {
+            throw new Error('Missing provider or provider settings');
+        }
+
+        const settings = providers[provider];
         const { appKey, apiUrl, model } = settings;
 
         if (!appKey || !apiUrl || !model) {

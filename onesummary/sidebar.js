@@ -4,13 +4,31 @@ import { PROMPT } from './config.js';
 class StorageManager {
   loadSettings() {
     return new Promise((resolve) => {
-      chrome.storage.sync.get(['appKey', 'apiUrl', 'model', 'prompt', 'temperature'], resolve);
+      chrome.storage.local.get(['provider', 'providers'], (result) => {
+        const provider = result.provider || 'default';
+        const providers = result.providers || {};
+        const settings = providers[provider] || {};
+        resolve({
+          provider: provider,
+          appKey: settings.appKey || '',
+          apiUrl: settings.apiUrl || '',
+          model: settings.model || '',
+          prompt: settings.prompt || '',
+          temperature: settings.temperature || ''
+        });
+      });
     });
   }
 
-  saveSettings(settings) {
-    return new Promise((resolve) => {
-      chrome.storage.sync.set(settings, resolve);
+  async saveSettings(settings) {
+    const { provider, ...providerSettings } = settings;
+    const result = await new Promise((resolve) => {
+      chrome.storage.local.get('providers', resolve);
+    });
+    const providers = result.providers || {};
+    providers[provider] = providerSettings;
+    await new Promise((resolve) => {
+      chrome.storage.local.set({ providers, provider }, resolve);
     });
   }
 
@@ -43,7 +61,7 @@ class UIManager {
   populateSettingsForm(settings) {
     document.getElementById('appKey').value = settings.appKey || '';
     document.getElementById('apiUrl').value = settings.apiUrl || '';
-    document.getElementById('model').value = settings.model || 'deepseek-chat';
+    document.getElementById('model').value = settings.model || '';
     document.getElementById('prompt').value = settings.prompt || PROMPT;
     document.getElementById('temperature').value = settings.temperature || '0.7';
 
@@ -62,7 +80,8 @@ class UIManager {
       apiUrl: document.getElementById('apiUrl').value,
       model: document.getElementById('model').value,
       prompt: document.getElementById('prompt').value,
-      temperature: document.getElementById('temperature').value
+      temperature: document.getElementById('temperature').value,
+      provider: document.getElementById('apiUrl').value.split('/')[2]
     };
   }
 
@@ -83,7 +102,6 @@ class UIManager {
   showMessage(message) {
     this.summaryElement.textContent = message;
     this.buttonContainer.style.display = 'none';
-
   }
 
   displaySummary(summary) {
@@ -148,9 +166,24 @@ class UIManager {
     const apiCandidates = document.getElementById('apiCandidates');
     const apiUrlInput = document.getElementById('apiUrl');
 
-    apiCandidates.addEventListener('change', (event) => {
+    apiCandidates.addEventListener('change', async (event) => {
       if (event.target.value) {
         apiUrlInput.value = event.target.value;
+        const provider = event.target.value.split('/')[2];
+
+        // 使用 Promise 包装 chrome.storage.local.get
+        const result = await new Promise(resolve => {
+          chrome.storage.local.get(['providers'], resolve);
+        });
+
+
+        const providers = result.providers || {};
+        const providerSettings = providers[provider] || {};
+
+        document.getElementById('appKey').value = providerSettings.appKey || '';
+        document.getElementById('model').value = providerSettings.model || '';
+        document.getElementById('prompt').value = providerSettings.prompt || PROMPT;
+        document.getElementById('temperature').value = providerSettings.temperature || '0.7';
       }
     });
 
@@ -222,7 +255,6 @@ class SummaryManager {
       const results = await chrome.scripting.executeScript({
         target: { tabId: tabId },
         func: () => {
-          console.log('Content script is running');
 
           const clone = document.cloneNode(true);
           const cloneBody = clone.body;
@@ -327,7 +359,9 @@ class PopupManager {
   async saveSettings() {
     const settings = this.uiManager.getSettingsFromForm();
     await this.storageManager.saveSettings(settings);
-    // Remove the call to checkSettingsAndGenerateSummary here
+
+    // 重新加载设置以确保更新
+    await this.loadSettings();
   }
 
   async checkSettingsAndGenerateSummary(forceRegenerate = false) {
