@@ -322,11 +322,18 @@
         margin: 7px 0;
       }
 
+      .icon-link-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+      }
+
       .icon-link {
         position: relative;
         display: inline-block;
         vertical-align: middle;
-        margin-top: 10px;
+        text-align: center;
+        margin: 0 10px;
       }
 
       .icon-link .tooltip {
@@ -514,28 +521,12 @@
           to close the sidebar
         </p>
 
-        <p style="margin-left: 50px">
-          <a
-            href="https://github.com/ultrasev/1summary/issues"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="icon-link"
-            style="margin-top: 20px; margin-bottom: 10px; padding: 5px 0"
-          >
-            <img
-              src="https://icon.icepanel.io/Technology/png-shadow-512/GitHub.png"
-              width="32"
-              height="32"
-              alt="GitHub"
-            />
-            <span class="tooltip">Report a Bug</span>
-          </a>
+        <div class="icon-link-container">
           <a
             href="https://x.com/slippertopia"
             target="_blank"
             rel="noopener noreferrer"
             class="icon-link"
-            style="margin-top: 10px; margin-left: 10px"
           >
             <img
               src="https://icon.icepanel.io/Technology/svg/Twitter.svg"
@@ -545,7 +536,21 @@
             />
             <span class="tooltip">Find me on Twitter</span>
           </a>
-        </p>
+          <a
+            href="https://github.com/ultrasev/1summary/issues"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="icon-link"
+          >
+            <img
+              src="https://icon.icepanel.io/Technology/png-shadow-512/GitHub.png"
+              width="32"
+              height="32"
+              alt="GitHub"
+            />
+            <span class="tooltip">Report a bug</span>
+          </a>
+        </div>
       </div>
     </div>
 
