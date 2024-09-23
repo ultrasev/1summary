@@ -212,6 +212,7 @@ class SummaryManager {
   async generateSummary(forceRegenerate = false) {
     this.uiManager.showMessage("Generating summary...");
     this.disableRegenerateButton();
+    this.toggleButtonsVisibility(false);
 
     try {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -229,12 +230,24 @@ class SummaryManager {
         await this.storageManager.cacheSummary(tabId, url, summary);
       }
       this.enableRegenerateButton();
-      document.getElementById('copyButton').style.display = 'block';
+      this.toggleButtonsVisibility(true);
     } catch (error) {
       this.handleError(error);
     } finally {
       this.enableRegenerateButton();
+      this.toggleButtonsVisibility(true);
     }
+  }
+
+  toggleButtonsVisibility(isVisible) {
+    const buttons = document.querySelectorAll('#regenerateButton, #copyButton, .button-title');
+    buttons.forEach(button => {
+      if (isVisible) {
+        button.classList.remove('hidden');
+      } else {
+        button.classList.add('hidden');
+      }
+    });
   }
 
   disableRegenerateButton() {
@@ -408,7 +421,7 @@ class PopupManager {
         copyButton.textContent = 'Copy';
       }, 2000);
     } catch (err) {
-      this.uiManager.showMessage('复制失败，请手动复制。');
+      this.uiManager.showMessage('Copy failed, please copy manually.');
     }
   }
 }
