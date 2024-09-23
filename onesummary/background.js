@@ -18,16 +18,43 @@ function toggleSidebar(tab) {
     }
 }
 
+function injectKeyListener(tabId) {
+    chrome.scripting.executeScript({
+        target: { tabId: tabId },
+        func: () => {
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape') {
+                    chrome.runtime.sendMessage({ action: 'close-sidebar' });
+                }
+            });
+        }
+    });
+}
+
 chrome.action.onClicked.addListener((tab) => {
     toggleSidebar(tab);
+    injectKeyListener(tab.id);
 });
 
 chrome.commands.onCommand.addListener((command, tab) => {
     if (command === "toggle-sidebar") {
         toggleSidebar(tab);
+        injectKeyListener(tab.id);
     }
 });
 
 chrome.tabs.onRemoved.addListener((tabId) => {
     openSidebarTabIds.delete(tabId);
+});
+
+chrome.runtime.onMessage.addListener((request, sender) => {
+    if (request.action === 'toggle-sidebar' && sender.tab) {
+        if (openSidebarTabIds.has(sender.tab.id)) {
+            toggleSidebar(sender.tab);
+        }
+    } else if (request.action === 'close-sidebar' && sender.tab) {
+        if (openSidebarTabIds.has(sender.tab.id)) {
+            toggleSidebar(sender.tab);
+        }
+    }
 });
