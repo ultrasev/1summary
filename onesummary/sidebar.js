@@ -408,9 +408,10 @@ class PopupManager {
         copyButton.textContent = 'Copy';
       }, 2000);
     } catch (err) {
-      this.uiManager.showMessage('Copy failed, please copy manually.');
+      this.uiManager.showMessage('复制失败，请手动复制。');
     }
   }
+}
 
 // Initialize the PopupManager when the DOM is loaded
 document.addEventListener('DOMContentLoaded', async () => {
