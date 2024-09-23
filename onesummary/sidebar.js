@@ -147,12 +147,15 @@ class UIManager {
     const connectionStatusText = document.getElementById('connectionStatusText');
     connectionStatus.innerHTML = '';
     connectionStatusText.innerHTML = '';
-
     if (result.success) {
-      connectionStatus.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="#4CAF50" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>';
-      connectionStatusText.innerHTML = '<p>Connection successful and configuration saved! Test response: </p>';
+      connectionStatus.innerHTML = 'SUCCESS';
+      connectionStatus.classList.add('success');
+      connectionStatus.classList.remove('error');
+      connectionStatusText.innerHTML = '<p>Connection established successfully. Configuration has been saved.</p>';
     } else {
-      connectionStatus.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="#F44336" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>';
+      connectionStatus.innerHTML = 'ERROR';
+      connectionStatus.classList.add('error');
+      connectionStatus.classList.remove('success');
       connectionStatusText.innerHTML = `<p>Connection failed: ${result.error}</p>`;
     }
 
