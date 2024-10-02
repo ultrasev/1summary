@@ -58,10 +58,6 @@
         background-color: #27ae60;
       }
 
-      .input-group {
-        margin-bottom: 15px;
-      }
-
       label {
         display: block;
         margin-bottom: 5px;
@@ -145,6 +141,7 @@
         margin-bottom: 10px;
         margin-top: 10px;
       }
+
       .input-group {
         display: flex;
         flex-direction: column;
@@ -202,6 +199,7 @@
         margin-bottom: 5px;
         font-size: 16px;
         color: var(--text-color);
+        font-family: "Courier New", Courier, monospace;
       }
 
       .action-button {
@@ -248,10 +246,10 @@
         transition: height 0.2s ease;
       }
       #testConnection {
-        width: 40px;
-        height: 40px;
-        padding: 8px;
-        background-color: #11b53f;
+        width: 42px;
+        height: 42px;
+        padding: 6px;
+        background-color: #b2d5bc;
         color: white;
         border: none;
         border-radius: 50%;
@@ -280,12 +278,12 @@
 
       #connectionStatus {
         display: inline-block;
-        margin-left: 10px;
+        margin-top: 10px;
         vertical-align: middle;
+        font-size: 16px;
       }
 
       #connectionStatusText {
-        margin-left: 10px;
         font-weight: bold;
       }
 
@@ -298,6 +296,7 @@
       .details-container {
         overflow-y: auto;
         border: 1px solid #ccc;
+        border-radius: 4px;
         padding: 10px;
         margin-top: 10px;
         background-color: #f8f8f8;
@@ -310,33 +309,78 @@
         line-height: 1.4;
       }
 
-      .contact-info {
+      .usage-info {
+        margin-top: 15px;
+        font-size: 14px;
+        color: var(--text-color);
+      }
+
+      .usage-info label {
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .usage-info p {
+        margin: 7px 0;
+      }
+
+      .icon-link-container {
         display: flex;
         justify-content: center;
-        align-items: center;
-        padding: 10px;
-        border-radius: 5px;
-        font-size: 12px;
+        margin-top: 20px;
       }
 
-      .contact-info p {
-        margin: 5px 0;
+      .icon-link {
+        position: relative;
+        display: inline-block;
+        vertical-align: middle;
+        text-align: center;
+        margin: 0 10px;
       }
 
-      .contact-info a {
-        display: flex;
-        align-items: center;
-        color: #3498db;
-        text-decoration: none;
-        transition: color 0.3s ease;
+      .icon-link .tooltip {
+        visibility: hidden;
+        width: 120px;
+        background-color: black;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px 0;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%; /* Position above the icon */
+        left: 50%;
+        margin-left: -60px;
+        opacity: 0;
+        transition: opacity 0.3s;
       }
 
-      .contact-info a:hover {
-        color: #2980b9;
+      .icon-link .tooltip::after {
+        content: "";
+        position: absolute;
+        top: 100%; /* Arrow at the bottom */
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: black transparent transparent transparent;
       }
 
-      .contact-info svg {
-        margin-right: 5px;
+      .icon-link:hover .tooltip {
+        visibility: visible;
+        opacity: 1;
+      }
+
+      .icon-link svg {
+        width: 24px;
+        height: 24px;
+      }
+
+      .success {
+        color: #2ecc71;
+      }
+      .error {
+        color: #e74c3c;
       }
     </style>
   </head>
@@ -367,7 +411,7 @@
               height="24"
             >
               <path
-                d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"
+                d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-1.34-5-3s2.24-3 5-3 5 1.34 5 3-2.24 3-5 3z"
               />
             </svg>
           </button>
@@ -439,46 +483,82 @@
       </div>
       <div class="input-group">
         <button id="testConnection" title="Test Connection">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            width="24"
-            height="24"
-          >
-            <path
-              d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"
-            />
-          </svg>
+          <img src="icons/save.svg" alt="Save Icon" width="24" height="24" />
         </button>
         <span id="connectionStatus"></span>
+        <p
+          id="connectionDetails"
+          style="
+            margin-top: 10px;
+            font-family: 'Courier New', Courier, monospace;
+          "
+        >
+          Test & Save
+        </p>
         <span id="connectionStatusText"></span>
-        <p id="connectionDetails" style="margin-top: 10px">Test & Save</p>
       </div>
 
-      <div class="contact-info">
+      <div class="usage-info">
+        <label>Shortcuts:</label>
         <p>
+          1. Use
+          <kbd
+            style="
+              background-color: #f0f0f0;
+              padding: 2px 4px;
+              border: 1px solid #ccc;
+              border-radius: 4px;
+              font-family: 'Courier New', Courier, monospace;
+            "
+            >Alt + S</kbd
+          >
+          to open/close the sidebar
+        </p>
+        <p>
+          2. Use
+          <kbd
+            style="
+              background-color: #f0f0f0;
+              padding: 2px 4px;
+              border: 1px solid #ccc;
+              border-radius: 4px;
+              font-family: 'Courier New', Courier, monospace;
+            "
+            >Esc</kbd
+          >
+          to close the sidebar
+        </p>
+
+        <div class="icon-link-container">
           <a
-            href="https://github.com/ultrasev/1summary"
+            href="https://x.com/slippertopia"
             target="_blank"
             rel="noopener noreferrer"
+            class="icon-link"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path
-                d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"
-              ></path>
-            </svg>
+            <img
+              src="https://icon.icepanel.io/Technology/svg/Twitter.svg"
+              width="32"
+              height="32"
+              alt="Twitter"
+            />
+            <span class="tooltip">Find me on Twitter</span>
           </a>
-        </p>
+          <a
+            href="https://github.com/ultrasev/1summary/issues"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="icon-link"
+          >
+            <img
+              src="https://icon.icepanel.io/Technology/png-shadow-512/GitHub.png"
+              width="32"
+              height="32"
+              alt="GitHub"
+            />
+            <span class="tooltip">Report a bug</span>
+          </a>
+        </div>
       </div>
     </div>
 
@@ -487,45 +567,24 @@
     <div class="button-container">
       <div class="button-wrapper">
         <button id="regenerateButton" class="action-button" title="Regenerate">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
+          <img
+            src="icons/regenerate.png"
             width="24"
             height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <polyline points="1 4 1 10 7 10"></polyline>
-            <polyline points="23 20 23 14 17 14"></polyline>
-            <path
-              d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"
-            ></path>
-          </svg>
+            alt="Regenerate"
+          />
         </button>
         <span class="button-title">Regenerate</span>
       </div>
 
       <div class="button-wrapper">
         <button id="copyButton" class="action-button" title="Copy">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
+          <img
+            src="icons/copy.png"
             width="24"
             height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-            <path
-              d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
-            ></path>
-          </svg>
+            alt="Copy"
+          />
         </button>
         <span class="button-title" id="copyButtonTitle">Copy</span>
       </div>
