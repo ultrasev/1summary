@@ -49,8 +49,9 @@ export function llm(content, onChunk) {
                                 resolve();
                                 return;
                             }
-                            const chunk = decoder.decode(value);
+                            const chunk = decoder.decode(value, { stream: true });
                             const lines = chunk.split("\n");
+
                             const parsedLines = lines
                                 .map(line => line.replace(/^data: /, "").trim())
                                 .filter(line => line !== "" && line !== "[DONE]")
@@ -58,25 +59,30 @@ export function llm(content, onChunk) {
                                     try {
                                         return JSON.parse(line);
                                     } catch (error) {
-                                        return {
-                                            choices: [
-                                                {
-                                                    delta: {
-                                                        content: line
+                                        const contentMatch = line.match(/"content":"([^"]*)"/);
+                                        if (contentMatch && contentMatch[1]) {
+                                            return {
+                                                choices: [
+                                                    {
+                                                        delta: {
+                                                            content: contentMatch[1]
+                                                        }
                                                     }
-                                                }
-                                            ]
-                                        };
+                                                ]
+                                            };
+                                        }
+                                        return null;
                                     }
                                 })
                                 .filter(line => line !== null);
 
                             for (const parsedLine of parsedLines) {
                                 const { choices } = parsedLine;
-                                const { delta } = choices[0];
-                                const { content } = delta;
-                                if (content) {
-                                    onChunk(content);
+                                if (choices && choices.length > 0) {
+                                    const { delta } = choices[0];
+                                    if (delta && delta.content) {
+                                        onChunk(delta.content);
+                                    }
                                 }
                             }
                             return readChunk();
