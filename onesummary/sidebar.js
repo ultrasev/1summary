@@ -59,6 +59,7 @@ class UIManager {
   }
 
   populateSettingsForm(settings) {
+    // 设置表单
     document.getElementById('appKey').value = settings.appKey || '';
     document.getElementById('apiUrl').value = settings.apiUrl || '';
     document.getElementById('model').value = settings.model || '';
@@ -81,7 +82,7 @@ class UIManager {
       model: document.getElementById('model').value,
       prompt: document.getElementById('prompt').value,
       temperature: document.getElementById('temperature').value,
-      provider: document.getElementById('apiUrl').value.split('/')[2]
+      provider: document.getElementById('apiUrl').value,
     };
   }
 
@@ -172,7 +173,7 @@ class UIManager {
     apiCandidates.addEventListener('change', async (event) => {
       if (event.target.value) {
         apiUrlInput.value = event.target.value;
-        const provider = event.target.value.split('/')[2];
+        const provider = event.target.value;
 
         // 使用 Promise 包装 chrome.storage.local.get
         const result = await new Promise(resolve => {
