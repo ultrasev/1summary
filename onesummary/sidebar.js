@@ -20,6 +20,13 @@ class StorageManager {
     });
   }
 
+  async currentProvider() {
+    const result = await new Promise((resolve) => {
+      chrome.storage.local.get('provider', resolve);
+    });
+    return result.provider || 'default';
+  }
+
   async saveSettings(settings) {
     const { provider, ...providerSettings } = settings;
     const result = await new Promise((resolve) => {
@@ -180,7 +187,6 @@ class UIManager {
           chrome.storage.local.get(['providers'], resolve);
         });
 
-
         const providers = result.providers || {};
         const providerSettings = providers[provider] || {};
 
@@ -188,10 +194,12 @@ class UIManager {
         document.getElementById('model').value = providerSettings.model || '';
         document.getElementById('prompt').value = providerSettings.prompt || PROMPT;
         document.getElementById('temperature').value = providerSettings.temperature || '0.7';
+
+        await this.saveProviderSettings(provider);
       }
     });
 
-    apiUrlInput.addEventListener('input', () => {
+    apiUrlInput.addEventListener('input', async () => {
       const currentUrl = apiUrlInput.value;
       const matchingOption = Array.from(apiCandidates.options).find(option => option.value === currentUrl);
       if (matchingOption) {
@@ -199,7 +207,60 @@ class UIManager {
       } else {
         apiCandidates.value = "";
       }
+
+      await this.saveProviderSettings(currentUrl);
     });
+  }
+
+  async saveProviderSettings(provider) {
+    const settings = {
+      provider: provider,
+      appKey: document.getElementById('appKey').value,
+      apiUrl: document.getElementById('apiUrl').value,
+      model: document.getElementById('model').value,
+      prompt: document.getElementById('prompt').value,
+      temperature: document.getElementById('temperature').value,
+    };
+
+    await new Promise(resolve => {
+      chrome.storage.local.set({ provider: provider }, resolve);
+    });
+
+    const storageManager = new StorageManager();
+    await storageManager.saveSettings(settings);
+
+    this.showSaveSuccessMessage(settings.model);
+  }
+
+  showSaveSuccessMessage(model) {
+    const messageElement = document.createElement('div');
+    messageElement.textContent = `Model changed to ${model}`;
+    messageElement.style.cssText = `
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      opacity: 0;
+      font-size: 14px;
+      transition: opacity 0.3s ease-in-out;
+    `;
+
+    document.body.appendChild(messageElement);
+
+    setTimeout(() => {
+      messageElement.style.opacity = '1';
+    }, 100);
+
+    setTimeout(() => {
+      messageElement.style.opacity = '0';
+      setTimeout(() => {
+        document.body.removeChild(messageElement);
+      }, 300);
+    }, 3000);
   }
 }
 

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>One-Click Summarizer Sidebar</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Schoolbell&display=swap"
       rel="stylesheet"
     />
     <style>
@@ -17,7 +17,6 @@
       }
 
       body {
-        font-family: serif, "Roboto", sans-serif;
         background-color: var(--background-color);
         color: var(--text-color);
         display: flex;
@@ -197,16 +196,15 @@
 
       .button-title {
         margin-bottom: 5px;
-        font-size: 16px;
+        font-size: 15px;
         color: var(--text-color);
-        font-family: "Courier New", Courier, monospace;
       }
 
       .action-button {
         width: 40px;
         height: 40px;
         padding: 8px;
-        background-color: #3498db;
+        background-color: #d1d8d1;
         color: white;
         border: none;
         border-radius: 50%;
@@ -218,11 +216,11 @@
       }
 
       #copyButton {
-        background-color: #2ecc71;
+        background-color: #82bb9a;
       }
 
       .action-button:hover {
-        background-color: #2980b9;
+        background-color: #c09131;
       }
 
       #copyButton:hover {
@@ -340,7 +338,7 @@
 
       .icon-link .tooltip {
         visibility: hidden;
-        width: 120px;
+        width: 150px;
         background-color: black;
         color: #fff;
         text-align: center;
@@ -428,24 +426,22 @@
         />
 
         <select id="apiCandidates" style="margin-top: 10px; margin-left: 10px">
-          <option value="https://api.openai.com/v1/chat/completions">
+          <option value="https://llm.ttoo.lol/openai/chat/completions">
             OpenAI API
           </option>
           <option value="https://api.deepseek.com/v1/chat/completions">
             DeepSeek API
           </option>
-          <option value="https://api.groq.com/openai/v1/chat/completions">
+          <option value="https://llm.ttoo.lol/groq/chat/completions">
             Groq API
           </option>
-          <option value="https://api.sambanova.ai/v1/chat/completions">
+          <option value="https://llm.ttoo.lol/sambanova/chat/completions">
             Sambanova API
           </option>
-          <option
-            value="https://llmapi.ultrasev.com/v2/mistral/chat/completions"
-          >
+          <option value="https://llm.ttoo.lol/mistral/chat/completions">
             Mistral API
           </option>
-          <option value="https://api.cerebras.ai/v1/chat/completions">
+          <option value="https://llm.ttoo.lol/cerebras/chat/completions">
             Cerebras API
           </option>
           <option value="https://api.lingyiwanwu.com/v1/chat/completions">
@@ -582,12 +578,7 @@
 
       <div class="button-wrapper">
         <button id="copyButton" class="action-button" title="Copy">
-          <img
-            src="icons/copy.png"
-            width="24"
-            height="24"
-            alt="Copy"
-          />
+          <img src="icons/copy.png" width="24" height="24" alt="Copy" />
         </button>
         <span class="button-title" id="copyButtonTitle">Copy</span>
       </div>
