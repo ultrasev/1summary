@@ -25,7 +25,8 @@
     "scripting",
     "webRequest",
     "declarativeNetRequest",
-    "storage"
+    "storage",
+    "downloads"
   ],
   "host_permissions": ["https://*/*"],
   "side_panel": {

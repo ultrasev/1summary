@@ -1,6 +1,8 @@
 import { StorageManager } from './storage.js';
 import { UIManager } from './ui.js';
 import { SummaryManager } from './summary.js';
+import { testLLMConnection } from '../utils/models.js';
+import { generateHash } from '../utils/hash.js';
 
 export class PopupManager {
     constructor() {
@@ -27,6 +29,7 @@ export class PopupManager {
         const testConnectionButton = document.getElementById('testConnection');
         const promptTextarea = document.getElementById('prompt');
         const copyButton = document.getElementById('copyButton');
+        const downloadButton = document.getElementById('downloadButton');
 
         if (settingsButton) {
             settingsButton.addEventListener('click', () => this.uiManager.toggleSettings());
@@ -42,6 +45,9 @@ export class PopupManager {
         }
         if (copyButton) {
             copyButton.addEventListener('click', () => this.copySummary());
+        }
+        if (downloadButton) {
+            downloadButton.addEventListener('click', () => this.downloadSummary());
         }
 
         this.uiManager.setupPasswordToggle();
@@ -99,4 +105,44 @@ export class PopupManager {
             this.uiManager.showMessage('Copy failed, please copy manually.');
         }
     }
+
+    async downloadSummary() {
+        try {
+            // Get current active tab information
+            const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+            const summaryText = this.uiManager.summaryElement.innerText;
+            const pageContent = await this.summaryManager.getPageContent(tab.id);
+
+            // Generate hash from URL for unique file identification
+            const urlHash = await generateHash(tab.url);
+
+            // Create and download summary file
+            const summaryBlob = new Blob([summaryText], { type: 'text/plain' });
+            const summaryUrl = URL.createObjectURL(summaryBlob);
+            const summaryLink = document.createElement('a');
+            summaryLink.href = summaryUrl;
+            summaryLink.download = `${urlHash}-summary.txt`;
+            document.body.appendChild(summaryLink);
+            summaryLink.click();
+            URL.revokeObjectURL(summaryUrl);
+            document.body.removeChild(summaryLink);
+
+            // Create and download original content file
+            const contentBlob = new Blob([pageContent], { type: 'text/plain' });
+            const contentUrl = URL.createObjectURL(contentBlob);
+            const contentLink = document.createElement('a');
+            contentLink.href = contentUrl;
+            contentLink.download = `${urlHash}-content.txt`;
+            document.body.appendChild(contentLink);
+            contentLink.click();
+            URL.revokeObjectURL(contentUrl);
+            document.body.removeChild(contentLink);
+        } catch (err) {
+            // Handle download errors
+            this.uiManager.showMessage('Download failed, please try again.');
+            console.error('Download error:', err);
+        }
+    }
+
+
 }
