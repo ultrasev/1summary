@@ -43,7 +43,7 @@ button {
 }
 
 button:hover {
-  background-color: #27ae60;
+  background-color: #6ae082;
 }
 
 label {
@@ -205,15 +205,15 @@ input[type="range"] {
 }
 
 #copyButton {
-  background-color: #82bb9a;
+  background-color: #d1d8d1;
 }
 
 .action-button:hover {
-  background-color: #c09131;
+  background-color: #6ae082;
 }
 
 #copyButton:hover {
-  background-color: #27ae60;
+  background-color: #6ae082;
 }
 
 .action-button:focus {
@@ -368,4 +368,12 @@ textarea#prompt {
 }
 .error {
   color: #e74c3c;
+}
+
+#downloadButton {
+  background-color: #d1d8d1;
+}
+
+#downloadButton:hover {
+  background-color: #6ae082;
 }
