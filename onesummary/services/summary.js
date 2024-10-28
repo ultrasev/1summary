@@ -1,4 +1,5 @@
-import { llm } from '../models.js';
+import { llm } from '../utils/models.js';
+
 export class SummaryManager {
     constructor(storageManager, uiManager) {
         this.storageManager = storageManager;

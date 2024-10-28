@@ -1,4 +1,4 @@
-import { PROMPT as DEFAULT_PROMPT } from './config.js';
+import { PROMPT as DEFAULT_PROMPT } from '../config.js';
 
 export function llm(content, onChunk) {
     return new Promise((resolve, reject) => {
