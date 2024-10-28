@@ -1,4 +1,5 @@
 import { PROMPT } from '../config.js';
+import { StorageManager } from './storage.js';
 
 export class UIManager {
     constructor() {
