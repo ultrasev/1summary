@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "1summary",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "一键生成网页摘要，支持自定义API设置，重新生成，文本复制。",
   "action": {
     "default_icon": {
